@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* AURA design tokens. Dark (deep navy/graphite + violet/cyan) is the default; light is the accessible alternative. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="dark"] {
+  --bg: #070b17;
+  --bg-elevated: #0d1324;
+  --surface: #121a30;
+  --surface-2: #18223d;
+  --border: #243055;
+  --text: #eef1fb;
+  --text-muted: #9aa4c4;
+  --primary: #8b5cf6;
+  --primary-strong: #a78bfa;
+  --primary-fg: #ffffff;
+  --accent: #22d3ee;
+  --danger: #f87171;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --ring: #a78bfa;
+  --glow: 0 0 0 1px rgb(139 92 246 / 0.35), 0 8px 32px -8px rgb(139 92 246 / 0.45);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f6f7fb;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #eef0f7;
+  --border: #d9ddea;
+  --text: #0f1424;
+  --text-muted: #4a5470;
+  --primary: #6d28d9;
+  --primary-strong: #5b21b6;
+  --primary-fg: #ffffff;
+  --accent: #0e7490;
+  --danger: #b91c1c;
+  --success: #047857;
+  --warning: #92400e;
+  --ring: #6d28d9;
+  --glow: 0 0 0 1px rgb(109 40 217 / 0.25), 0 8px 24px -12px rgb(109 40 217 / 0.35);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-ring: var(--ring);
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --shadow-glow: var(--glow);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Urdu (Arabic script) text renders right-to-left with a suitable font. */
+[lang="ur"] {
+  direction: rtl;
+  font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", serif;
+  line-height: 2;
+}
+
+.aura-backdrop {
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, rgb(139 92 246 / 0.16), transparent 60%),
+    radial-gradient(50rem 30rem at 110% 10%, rgb(34 211 238 / 0.1), transparent 60%),
+    var(--bg);
+}
+
+/* Animation intensity: "off" removes motion everywhere; OS reduced-motion is always respected. */
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes aura-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes aura-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

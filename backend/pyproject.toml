@@ -1,0 +1,47 @@
+[project]
+name = "aura-backend"
+version = "0.1.0"
+description = "AURA backend API (FastAPI modular monolith)"
+requires-python = ">=3.12,<3.13"
+license = "LicenseRef-Proprietary"
+dependencies = [
+    "alembic>=1.20",
+    "argon2-cffi>=25.1",
+    "email-validator>=2.2",
+    "fastapi>=0.165",
+    "httpx>=0.28",
+    "psycopg[binary]>=3.3",
+    "pydantic>=2.14",
+    "pydantic-settings>=2.16",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.1",
+    "uvicorn>=0.52",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "SIM"]
+ignore = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["migrations/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
