@@ -1,0 +1,43 @@
+{
+  "product": "AURA",
+  "tagline": "Your AI Powerhouse",
+  "release_order": [
+    "public_web_beta",
+    "windows_desktop"
+  ],
+  "open_source_first": true,
+  "core_modules": 20,
+  "approved_additional_features": [
+    "Universal Workspace + Project Continuity Engine",
+    "Memory Intelligence",
+    "Live AI Agent Control Room",
+    "Model Arena",
+    "Evaluation Center"
+  ],
+  "frontend": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Tailwind CSS",
+    "shadcn/ui"
+  ],
+  "backend": [
+    "Python",
+    "FastAPI",
+    "PostgreSQL",
+    "SQLAlchemy",
+    "Alembic"
+  ],
+  "desktop_candidate": "Tauri",
+  "animation": [
+    "Framer Motion",
+    "GSAP selectively",
+    "Three.js selectively"
+  ],
+  "ai_orchestration_candidate": "LangGraph",
+  "initial_beta_target_accounts": "50-100",
+  "registration": "open_with_verification_and_abuse_controls",
+  "paid_provider_default": false,
+  "must_test_and_fix": true,
+  "do_not_claim_complete_without_evidence": true
+}
