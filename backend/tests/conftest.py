@@ -78,7 +78,9 @@ class Api:
 def last_link(db: Session, email: str) -> str:
     db.expire_all()
     mail = db.scalars(
-        select(OutboxEmail).where(OutboxEmail.to_email == email).order_by(OutboxEmail.created_at.desc())
+        select(OutboxEmail)
+        .where(OutboxEmail.to_email == email)
+        .order_by(OutboxEmail.created_at.desc())
     ).first()
     assert mail is not None
     m = re.search(r"token=([\w\-]+)", mail.body)
@@ -86,7 +88,9 @@ def last_link(db: Session, email: str) -> str:
     return m.group(1)
 
 
-def make_user(db: Session, email: str = "user@example.com", password: str = "correct-horse-1") -> Api:
+def make_user(
+    db: Session, email: str = "user@example.com", password: str = "correct-horse-1"
+) -> Api:
     api = Api()
     assert api.post("/auth/signup", {"email": email, "password": password}).status_code == 202
     assert api.post("/auth/verify-email", {"token": last_link(db, email)}).status_code == 200

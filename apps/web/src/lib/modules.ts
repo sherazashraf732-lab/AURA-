@@ -46,9 +46,9 @@ export interface ModuleInfo {
  */
 export const MODULES: ModuleInfo[] = [
   { id: 'dashboard', name: 'Dashboard', path: '/app', icon: LayoutDashboard, status: 'live', phase: 3, summary: 'Overview of your workspace and usage.' },
-  { id: 'chat', name: 'Chat', path: '/app/chat', icon: MessagesSquare, status: 'planned', phase: 6, summary: 'Universal assistant with multiple model providers.' },
-  { id: 'projects', name: 'Projects', path: '/app/projects', icon: FolderKanban, status: 'planned', phase: 7, summary: 'Group chats, files and instructions; resume work later (A1).' },
-  { id: 'memory', name: 'Memory', path: '/app/memory', icon: Brain, status: 'planned', phase: 7, summary: 'View, edit, disable and delete what AURA remembers (A2).' },
+  { id: 'chat', name: 'Chat', path: '/app/chat', icon: MessagesSquare, status: 'live', phase: 6, summary: 'Universal assistant with multiple model providers.' },
+  { id: 'projects', name: 'Projects', path: '/app/projects', icon: FolderKanban, status: 'live', phase: 7, summary: 'Group chats, files and instructions; resume work later (A1).' },
+  { id: 'memory', name: 'Memory', path: '/app/memory', icon: Brain, status: 'live', phase: 7, summary: 'View, edit, disable and delete what AURA remembers (A2).' },
   { id: 'research', name: 'AI Research', path: '/app/research', icon: Search, status: 'planned', phase: 8, summary: 'Planned research with cited sources (M01).' },
   { id: 'agents', name: 'Agent Control Room', path: '/app/agents', icon: Bot, status: 'planned', phase: 8, summary: 'Live view of agent steps, tools and approvals (M03, A3).' },
   { id: 'factcheck', name: 'Fact Checker', path: '/app/fact-check', icon: CheckCheck, status: 'planned', phase: 9, summary: 'Supporting and contradicting evidence for claims (M02).' },

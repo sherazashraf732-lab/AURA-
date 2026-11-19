@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     max_upload_mb: int = 20
     max_concurrent_jobs_per_user: int = 2
 
+    groq_api_key: SecretStr | None = None
+    gemini_api_key: SecretStr | None = None
+    openrouter_api_key: SecretStr | None = None
+    # Shared free-tier protection: total AURA requests per provider per UTC day.
+    provider_daily_request_cap: int = 500
+
     resend_api_key: SecretStr | None = None
     mail_from: str | None = None
     bootstrap_admin_email: str | None = None  # first user with this email becomes admin

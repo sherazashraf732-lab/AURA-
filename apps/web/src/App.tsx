@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/lib/auth'
@@ -7,6 +8,13 @@ import { LandingPage } from '@/pages/LandingPage'
 import { DashboardPage, ModulesPage, NotFoundPage, SettingsPage } from '@/pages/AppPages'
 import { ForgotPasswordPage, LoginPage, ResetPasswordPage, SignupPage, VerifyEmailPage } from '@/pages/auth/AuthPages'
 import { ApiError } from '@/lib/api'
+import { Spinner } from '@/components/ui/card'
+
+// Route-level code splitting keeps the first load small on slow connections.
+const ChatPage = lazy(() => import('@/pages/ChatPage').then((m) => ({ default: m.ChatPage })))
+const MemoryPage = lazy(() => import('@/pages/MemoryPage').then((m) => ({ default: m.MemoryPage })))
+const ProjectsPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })))
+const ProjectDetailPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectDetailPage })))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +27,7 @@ const queryClient = new QueryClient({
 
 export function AppRoutes() {
   return (
+    <Suspense fallback={<div className="flex h-full items-center justify-center"><Spinner /></div>}>
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -30,9 +39,15 @@ export function AppRoutes() {
         <Route index element={<DashboardPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="modules" element={<ModulesPage />} />
+        <Route path="chat" element={<ChatPage />} />
+        <Route path="chat/:conversationId" element={<ChatPage />} />
+        <Route path="memory" element={<MemoryPage />} />
+        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="projects/:projectId" element={<ProjectDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    </Suspense>
   )
 }
 

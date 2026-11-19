@@ -165,6 +165,17 @@ export function SettingsPage() {
             onChange={(v) => save.mutate({ auto_continuation: v })}
           />
         </Card>
+        <Card className="space-y-3">
+          <h2 className="font-medium">Privacy</h2>
+          <Toggle
+            label="Allow sending my chat messages to external free-tier AI providers"
+            checked={!!me?.provider_consent_at}
+            onChange={(v) => save.mutate({ provider_consent: v })}
+          />
+          <p className="text-xs text-muted">
+            Free-tier providers may use and review what you send. Without this consent you can still use the offline demo model.
+          </p>
+        </Card>
       </div>
     </div>
   )
