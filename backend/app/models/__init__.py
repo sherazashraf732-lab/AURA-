@@ -9,6 +9,7 @@ from app.models.identity import (
     User,
     Workspace,
 )
+from app.models.knowledge import DocumentChunk, KnowledgeSource
 
 __all__ = [
     "AgentRun",
@@ -17,7 +18,9 @@ __all__ = [
     "AuthSession",
     "Conversation",
     "ConversationSummary",
+    "DocumentChunk",
     "EmailToken",
+    "KnowledgeSource",
     "Message",
     "OutboxEmail",
     "Project",

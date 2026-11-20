@@ -11,6 +11,7 @@ Nothing is deployed or pushed. Local Git only.
 | Phase 6 model router + chat | PASS (backend tests, mock provider) | 14 tests incl. cross-user isolation, quota, consent; real providers untested (no keys) |
 | Phase 7 memory/continuation/language | PASS (backend tests) | Memory, project memory isolation, summaries, auto-continuation, 19 language tests |
 | Phase 8 research/agents | PASS (backend tests, demo sources) | 6 run tests + SSRF guard; real search providers untested (no keys) |
-| Phases 9–17 | NOT STARTED | — |
+| Phase 9 knowledge base + fact checker | PASS (backend tests) | Upload txt/md/csv/pdf/docx with magic-byte + zip-bomb checks, PostgreSQL full-text search, cited answers, isolation; 6 tests. Only extracted text is stored (no original files yet) |
+| Phases 10–17 | NOT STARTED | — |
 
-Backend: 64 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
+Backend: 70 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.

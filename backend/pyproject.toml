@@ -13,6 +13,8 @@ dependencies = [
     "psycopg[binary]>=3.3",
     "pydantic>=2.14",
     "pydantic-settings>=2.16",
+    "pypdf>=7.1",
+    "python-docx>=1.2",
     "python-multipart>=0.0.20",
     "sqlalchemy>=2.1",
     "uvicorn>=0.52",
@@ -48,3 +50,4 @@ addopts = "-q"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E501", "S105", "S106", "S107"]
+"migrations/versions/*" = ["E501"]

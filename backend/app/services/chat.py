@@ -300,7 +300,12 @@ def _sse(event: str, data: object) -> str:
 
 def prepare_send(db: Session, user: User, conv: Conversation) -> None:
     """Checks that must fail with a normal HTTP error before the stream starts."""
-    provider = get_provider(conv.provider)
+    ensure_provider_usable(db, user, conv.provider)
+
+
+def ensure_provider_usable(db: Session, user: User, provider_id: str) -> None:
+    """Consent, configuration and quota checks shared by every feature that calls a model."""
+    provider = get_provider(provider_id)
     if provider.info.requires_consent and user.provider_consent_at is None:
         raise AppError(
             "consent_required",
@@ -309,7 +314,7 @@ def prepare_send(db: Session, user: User, conv: Conversation) -> None:
         )
     if not provider.configured():
         raise AppError("provider_unconfigured", f"{provider.info.name} is not configured.", 503)
-    check_quota(db, user, conv.provider)
+    check_quota(db, user, provider_id)
 
 
 def stream_reply(user_id: UUID, conversation_id: UUID, text: str) -> Iterator[str]:
