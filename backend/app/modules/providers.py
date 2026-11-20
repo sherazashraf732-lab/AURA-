@@ -236,7 +236,7 @@ PROVIDERS: dict[str, Provider] = {
             paid=False,
             free_tier_note="Free models: 20 requests/minute and 50 requests/day in total.",
             data_policy="Each free model's host has its own data policy; some may log prompts.",
-            models=(ModelInfo("openai/gpt-oss-20b:free", "GPT-OSS 20B (free)", 131072),),
+            models=(ModelInfo("google/gemma-4-31b-it:free", "Gemma 4 31B (free)", 262144),),
         ),
         "https://openrouter.ai/api/v1",
         "openrouter_api_key",
