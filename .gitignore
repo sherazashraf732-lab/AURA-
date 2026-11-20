@@ -38,3 +38,4 @@ src-tauri/target/
 .local/
 pgdata/
 *.tsbuildinfo
+.neon

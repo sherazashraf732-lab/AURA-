@@ -14,7 +14,7 @@ import psycopg
 from playwright.sync_api import sync_playwright
 
 BASE = os.environ.get("AURA_BASE", "http://localhost:5173")
-DB = "postgresql://aura:aura@127.0.0.1:5433/aura"
+DB = os.environ.get("AURA_SMOKE_DB", "postgresql://aura:aura@127.0.0.1:5433/aura")
 PAGES = ["/app", "/app/chat", "/app/projects", "/app/memory", "/app/knowledge", "/app/research",
          "/app/fact-check", "/app/agents", "/app/documents", "/app/data", "/app/coding",
          "/app/workflows", "/app/usage", "/app/security", "/app/arena", "/app/evaluation",
