@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
     openrouter_api_key: SecretStr | None = None
+    tavily_api_key: SecretStr | None = None
+    exa_api_key: SecretStr | None = None
     # Shared free-tier protection: total AURA requests per provider per UTC day.
     provider_daily_request_cap: int = 500
 

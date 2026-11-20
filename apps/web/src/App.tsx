@@ -14,6 +14,11 @@ import { Spinner } from '@/components/ui/card'
 const ChatPage = lazy(() => import('@/pages/ChatPage').then((m) => ({ default: m.ChatPage })))
 const MemoryPage = lazy(() => import('@/pages/MemoryPage').then((m) => ({ default: m.MemoryPage })))
 const ProjectsPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })))
+const Agents = () => import('@/pages/AgentsPages')
+const ResearchPage = lazy(() => Agents().then((m) => ({ default: () => <m.NewRunPage kind="research" /> })))
+const FactCheckPage = lazy(() => Agents().then((m) => ({ default: () => <m.NewRunPage kind="fact_check" /> })))
+const ControlRoomPage = lazy(() => Agents().then((m) => ({ default: m.ControlRoomPage })))
+const RunDetailPage = lazy(() => Agents().then((m) => ({ default: m.RunDetailPage })))
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectDetailPage })))
 
 const queryClient = new QueryClient({
@@ -44,6 +49,10 @@ export function AppRoutes() {
         <Route path="memory" element={<MemoryPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+        <Route path="research" element={<ResearchPage />} />
+        <Route path="fact-check" element={<FactCheckPage />} />
+        <Route path="agents" element={<ControlRoomPage />} />
+        <Route path="agents/:runId" element={<RunDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

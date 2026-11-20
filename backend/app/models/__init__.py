@@ -1,3 +1,4 @@
+from app.models.agents import AgentRun, AgentStep
 from app.models.chat import Conversation, ConversationSummary, Message, UsageEvent, UserMemory
 from app.models.identity import (
     AuditEvent,
@@ -10,6 +11,8 @@ from app.models.identity import (
 )
 
 __all__ = [
+    "AgentRun",
+    "AgentStep",
     "AuditEvent",
     "AuthSession",
     "Conversation",
