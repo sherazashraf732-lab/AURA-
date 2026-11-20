@@ -6,11 +6,11 @@ Nothing is deployed or pushed. Local Git only.
 |---|---|---|
 | Phase 2 repo foundation | PARTIAL | Lint/type/test pass locally; CI file written, not yet run on GitHub |
 | Phase 3 web shell/design system | PARTIAL | 7 web tests pass; build passes (main bundle 560 KB, code-split routes) |
-| Phase 4 backend + PostgreSQL | PARTIAL | App core done; project-local PostgreSQL 18.7 downloaded, extraction in progress; Alembic migration not yet generated |
-| Phase 5 auth/workspaces | NOT TESTED | Code written; 12 DB tests not yet run |
-| Phase 6 model router + chat | NOT TESTED | Code + UI written; 14 DB tests not yet run |
-| Phase 7 memory/continuation/language | PARTIAL | Roman Urdu detector: 19 tests pass; memory/summary API + UI not yet DB-tested |
-| Phase 8 research/agents | NOT TESTED | SSRF guard + parsers: 13 tests pass; runner/Control Room not yet DB-tested |
+| Phase 4 backend + PostgreSQL | PASS (local) | Local PostgreSQL 18.7; initial Alembic migration upgrades/downgrades cleanly, `alembic check` clean |
+| Phase 5 auth/workspaces | PASS (backend tests) | 12 tests incl. CSRF, reset, rate limit, enumeration; UI not browser-tested |
+| Phase 6 model router + chat | PASS (backend tests, mock provider) | 14 tests incl. cross-user isolation, quota, consent; real providers untested (no keys) |
+| Phase 7 memory/continuation/language | PASS (backend tests) | Memory, project memory isolation, summaries, auto-continuation, 19 language tests |
+| Phase 8 research/agents | PASS (backend tests, demo sources) | 6 run tests + SSRF guard; real search providers untested (no keys) |
 | Phases 9–17 | NOT STARTED | — |
 
-Next steps: finish PostgreSQL extraction, run `scripts/dev-db.ps1 start`, run `uv run pytest` and fix failures, generate the initial Alembic migration, then continue Phase 9.
+Backend: 64 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
