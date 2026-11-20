@@ -19,3 +19,11 @@ def test_unknown_route_uses_error_schema() -> None:
     body = r.json()["error"]
     assert body["code"] == "http_404"
     assert body["request_id"]
+
+
+def test_database_url_normalised_for_psycopg() -> None:
+    from app.core.config import Settings
+
+    neon = "postgresql://u:p@ep-x.neon.tech/neondb?sslmode=require&channel_binding=require"
+    assert Settings(database_url=neon).database_url.startswith("postgresql+psycopg://u:p@ep-x")
+    assert Settings(database_url="postgres://a@b/c").database_url == "postgresql+psycopg://a@b/c"

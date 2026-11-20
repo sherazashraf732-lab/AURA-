@@ -1,14 +1,17 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """All configuration comes from environment variables or backend/.env (never committed)."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    # backend/.env, then the repo-root .env.local that `neon deploy` writes (later file wins).
+    model_config = SettingsConfigDict(
+        env_file=(".env", "../.env.local"), env_file_encoding="utf-8", extra="ignore"
+    )
 
     app_env: Literal["development", "test", "staging", "production"] = "development"
     app_name: str = "AURA"
@@ -49,6 +52,15 @@ class Settings(BaseSettings):
     session_ttl_hours: int = 24 * 7
     email_verification_ttl_hours: int = 24
     password_reset_ttl_minutes: int = 30
+
+    @field_validator("database_url")
+    @classmethod
+    def _psycopg_driver(cls, v: str) -> str:
+        """Neon and most hosts give postgres:// URLs; SQLAlchemy needs the psycopg driver."""
+        for prefix in ("postgres://", "postgresql://"):
+            if v.startswith(prefix):
+                return "postgresql+psycopg://" + v[len(prefix) :]
+        return v
 
     @property
     def is_production(self) -> bool:
