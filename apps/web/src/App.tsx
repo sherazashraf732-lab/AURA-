@@ -24,6 +24,16 @@ const DocumentsPage = lazy(() => import('@/pages/DocumentsPage').then((m) => ({ 
 const DataPage = lazy(() => import('@/pages/DataPage').then((m) => ({ default: m.DataPage })))
 const CodingPage = lazy(() => import('@/pages/CodingPage').then((m) => ({ default: m.CodingPage })))
 const WorkflowsPage = lazy(() => import('@/pages/WorkflowsPage').then((m) => ({ default: m.WorkflowsPage })))
+const Tools = () => import('@/pages/ToolsPages')
+const UsagePage = lazy(() => Tools().then((m) => ({ default: m.UsagePage })))
+const SecurityPage = lazy(() => Tools().then((m) => ({ default: m.SecurityPage })))
+const ArenaPage = lazy(() => Tools().then((m) => ({ default: m.ArenaPage })))
+const EvaluationPage = lazy(() => Tools().then((m) => ({ default: m.EvaluationPage })))
+const IntegrationsPage = lazy(() => Tools().then((m) => ({ default: m.IntegrationsPage })))
+const GraphPage = lazy(() => Tools().then((m) => ({ default: m.GraphPage })))
+const OcrPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="ocr" /> })))
+const VisionPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="vision" /> })))
+const AudioPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="audio" /> })))
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectDetailPage })))
 
 const queryClient = new QueryClient({
@@ -59,6 +69,15 @@ export function AppRoutes() {
         <Route path="data" element={<DataPage />} />
         <Route path="coding" element={<CodingPage />} />
         <Route path="workflows" element={<WorkflowsPage />} />
+        <Route path="usage" element={<UsagePage />} />
+        <Route path="security" element={<SecurityPage />} />
+        <Route path="arena" element={<ArenaPage />} />
+        <Route path="evaluation" element={<EvaluationPage />} />
+        <Route path="integrations" element={<IntegrationsPage />} />
+        <Route path="graph" element={<GraphPage />} />
+        <Route path="ocr" element={<OcrPage />} />
+        <Route path="vision" element={<VisionPage />} />
+        <Route path="audio" element={<AudioPage />} />
         <Route path="research" element={<ResearchPage />} />
         <Route path="fact-check" element={<FactCheckPage />} />
         <Route path="agents" element={<ControlRoomPage />} />

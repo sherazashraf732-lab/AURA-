@@ -82,7 +82,7 @@ def search(
             "part": h.seq + 1,
             "excerpt": h.text[:400],
             "rank": round(h.rank, 4),
-        }  # fmt: skip
+        }
         for h in svc.search(db, user, q)
     ]
 

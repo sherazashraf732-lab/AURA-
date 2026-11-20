@@ -238,8 +238,13 @@ PROVIDERS: dict[str, Provider] = {
 }
 
 
-FAILOVER_CODES = {"provider_quota", "provider_error", "provider_timeout", "provider_unreachable",
-                  "provider_unconfigured"}  # fmt: skip
+FAILOVER_CODES = {
+    "provider_quota",
+    "provider_error",
+    "provider_timeout",
+    "provider_unreachable",
+    "provider_unconfigured",
+}
 LONG_CONTEXT_TOKENS = 100_000
 
 
@@ -290,9 +295,11 @@ class AutoProvider:
                 if started or e.code not in FAILOVER_CODES:
                     raise  # never splice two providers' answers together
                 last = e
-        raise AppError("no_free_provider",
-                       "No free model is available right now. Please try again later.",
-                       last.status if last else 503)  # fmt: skip
+        raise AppError(
+            "no_free_provider",
+            "No free model is available right now. Please try again later.",
+            last.status if last else 503,
+        )
 
 
 PROVIDERS["auto"] = AutoProvider()

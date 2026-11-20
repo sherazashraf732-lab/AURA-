@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import app.api.v1.router  # noqa: F401  (registers tables defined next to their routes)
 import app.models  # noqa: F401  (registers all tables on Base.metadata)
 from app.core.config import get_settings
 from app.database.session import Base

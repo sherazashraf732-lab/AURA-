@@ -101,9 +101,14 @@ def profile(columns: list[str], rows: list[list[str]]) -> list[dict[str, object]
             "missing": len(values) - len(present),
         }
         if numeric and nums:
-            col.update(min=min(nums), max=max(nums), mean=round(statistics.fmean(nums), 6),
-                       median=statistics.median(nums), sum=round(sum(nums), 6),
-                       std=round(statistics.pstdev(nums), 6))  # fmt: skip
+            col.update(
+                min=min(nums),
+                max=max(nums),
+                mean=round(statistics.fmean(nums), 6),
+                median=statistics.median(nums),
+                sum=round(sum(nums), 6),
+                std=round(statistics.pstdev(nums), 6),
+            )
         else:
             col["unique"] = len(set(present))
             col["top"] = Counter(present).most_common(5)
@@ -126,8 +131,12 @@ def chart(
         elif (n := _num(r[yi])) is not None:
             groups[key].append(n)
     fns: dict[str, Callable[[list[float]], float]] = {
-        "sum": sum, "mean": statistics.fmean, "count": len, "min": min, "max": max,
-    }  # fmt: skip
+        "sum": sum,
+        "mean": statistics.fmean,
+        "count": len,
+        "min": min,
+        "max": max,
+    }
     fn = fns[agg]
     points = [{"x": k, "y": round(float(fn(v)), 6)} for k, v in groups.items() if v]
     if all(_num(p["x"]) is not None for p in points):  # type: ignore[arg-type]

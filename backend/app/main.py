@@ -1,4 +1,5 @@
 import logging
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -8,6 +9,7 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from app.api.v1.router import api_router
+from app.api.v1.workflows import scheduler_loop
 from app.core.config import get_settings
 from app.core.errors import install_error_handlers
 from app.services.research import recover_stuck_runs
@@ -25,7 +27,10 @@ SECURITY_HEADERS = {
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     recover_stuck_runs()  # in-process runs cannot survive a restart; mark them failed honestly
+    stop = threading.Event()
+    threading.Thread(target=scheduler_loop, args=(stop,), daemon=True, name="scheduler").start()
     yield
+    stop.set()
 
 
 def create_app() -> FastAPI:

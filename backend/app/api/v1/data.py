@@ -64,8 +64,13 @@ def import_dataset(
         raise AppError("too_large", f"Files are limited to {get_settings().max_upload_mb} MB.", 413)
     columns, rows = svc.parse_table(file.filename or "", data)
     rows = svc.clean(rows, trim, drop_empty, dedupe)
-    ds = Dataset(owner_id=user.id, name=(file.filename or "dataset")[-255:], columns=columns,
-                 rows=rows, row_count=len(rows))  # fmt: skip
+    ds = Dataset(
+        owner_id=user.id,
+        name=(file.filename or "dataset")[-255:],
+        columns=columns,
+        rows=rows,
+        row_count=len(rows),
+    )
     db.add(ds)
     db.flush()
     return DatasetOut.model_validate(ds, from_attributes=True)
@@ -91,8 +96,13 @@ def dataset_chart(
     agg: svc.Agg = "sum",
 ) -> dict[str, object]:
     ds = _get(db, user, dataset_id)
-    return {"x": x, "y": y, "agg": agg, "source": ds.name,
-            "points": svc.chart(ds.columns, ds.rows, x, y, agg)}  # fmt: skip
+    return {
+        "x": x,
+        "y": y,
+        "agg": agg,
+        "source": ds.name,
+        "points": svc.chart(ds.columns, ds.rows, x, y, agg),
+    }
 
 
 @router.get("/datasets/{dataset_id}/export")
@@ -101,8 +111,11 @@ def export_dataset(
 ) -> Response:
     ds = _get(db, user, dataset_id)
     stem = re.sub(r"[^\w\- ]+", "", ds.name.rsplit(".", 1)[0])[:80] or "dataset"
-    mime = "text/csv" if format == "csv" else (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")  # fmt: skip
+    mime = (
+        "text/csv"
+        if format == "csv"
+        else ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    )
     disposition = f'attachment; filename="{stem}.{format}"'
     body = svc.export(ds.columns, ds.rows, format)
     return Response(body, media_type=mime, headers={"Content-Disposition": disposition})

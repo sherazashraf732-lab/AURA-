@@ -2,7 +2,21 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 
 from app.api.deps import DbSession, check_csrf
-from app.api.v1 import agents, auth, chat, coding, data, documents, knowledge, projects, workflows
+from app.api.v1 import (
+    agents,
+    auth,
+    chat,
+    coding,
+    data,
+    documents,
+    evaluation,
+    integrations,
+    knowledge,
+    media,
+    projects,
+    security,
+    workflows,
+)
 
 api_router = APIRouter(dependencies=[Depends(check_csrf)])
 
@@ -27,3 +41,5 @@ api_router.include_router(documents.router)
 api_router.include_router(data.router)
 api_router.include_router(coding.router)
 api_router.include_router(workflows.router)
+for _r in (security, evaluation, media, integrations):
+    api_router.include_router(_r.router)

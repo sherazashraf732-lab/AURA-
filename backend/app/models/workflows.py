@@ -38,3 +38,21 @@ class WorkflowRun(IdMixin, Base):
     error: Mapped[str | None] = mapped_column(String(500), default=None)
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
     finished_at: Mapped[datetime | None] = mapped_column(default=None)
+
+
+class WorkflowSchedule(IdMixin, Base):
+    """Automation (M13): run a workflow on an interval. Workflows have no external side effects."""
+
+    __tablename__ = "workflow_schedules"
+
+    workflow_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workflows.id", ondelete="CASCADE"), index=True
+    )
+    owner_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    interval_minutes: Mapped[int] = mapped_column(Integer)
+    input: Mapped[str] = mapped_column(String(8000), default="")
+    enabled: Mapped[bool] = mapped_column(default=True)
+    next_run_at: Mapped[datetime]
+    last_run_id: Mapped[UUID | None] = mapped_column(default=None)
+    last_error: Mapped[str | None] = mapped_column(String(500), default=None)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)

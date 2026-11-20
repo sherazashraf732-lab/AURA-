@@ -265,8 +265,15 @@ def parse_summary(text: str) -> dict[str, object]:
         raise AppError("summary_failed", "The model did not return a usable summary.", 502) from e
     if not isinstance(data, dict):
         raise AppError("summary_failed", "The model did not return a usable summary.", 502)
-    keys = ["key_facts", "decisions", "instructions", "completed", "pending", "artifacts",
-            "open_questions"]  # fmt: skip
+    keys = [
+        "key_facts",
+        "decisions",
+        "instructions",
+        "completed",
+        "pending",
+        "artifacts",
+        "open_questions",
+    ]
     clean: dict[str, object] = {"goal": str(data.get("goal", ""))[:1000]}
     for k in keys:
         v = data.get(k, [])

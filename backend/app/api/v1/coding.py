@@ -40,7 +40,9 @@ def assist(body: AssistIn, user: VerifiedUser, db: DbSession) -> dict[str, objec
     chat_svc.ensure_provider_usable(db, user, body.provider)
     reply = language.resolve(body.notes or "en", user.language_override, None).reply_instruction()
     system = SYSTEM.format(task=TASKS[body.task], language=reply)
-    prompt = (f"Programming language: {body.language or 'unspecified'}\n"
-              f"Notes: {body.notes or '(none)'}\n\n```\n{body.code}\n```")  # fmt: skip
+    prompt = (
+        f"Programming language: {body.language or 'unspecified'}\n"
+        f"Notes: {body.notes or '(none)'}\n\n```\n{body.code}\n```"
+    )
     text, served = complete(db, user.id, "coding", body.provider, body.model, system, prompt)
     return {"result": text, "served_by": served, "executed": False, "demo": body.provider == "mock"}

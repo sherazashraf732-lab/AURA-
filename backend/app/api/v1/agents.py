@@ -109,9 +109,16 @@ def create_run(body: RunIn, user: VerifiedUser, db: DbSession) -> RunOut:
     if (active or 0) >= get_settings().max_concurrent_jobs_per_user:
         raise AppError("too_many_runs", "Wait for your running tasks to finish.", 429)
     chat_svc.check_quota(db, user, body.provider)
-    run = AgentRun(owner_id=user.id, project_id=body.project_id, kind=body.kind,
-                   title=body.text.strip().splitlines()[0][:300], input={"text": body.text},
-                   provider=body.provider, model=body.model, search_provider=search.id)  # fmt: skip
+    run = AgentRun(
+        owner_id=user.id,
+        project_id=body.project_id,
+        kind=body.kind,
+        title=body.text.strip().splitlines()[0][:300],
+        input={"text": body.text},
+        provider=body.provider,
+        model=body.model,
+        search_provider=search.id,
+    )
     db.add(run)
     db.commit()
     research.start(run.id)

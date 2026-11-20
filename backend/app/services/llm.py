@@ -17,7 +17,15 @@ def complete(
     result = StreamResult()
     msgs = [ChatMessage("system", system), ChatMessage("user", user)]
     text = "".join(provider.stream(model, msgs, result))
-    db.add(UsageEvent(user_id=user_id, kind=kind, provider=provider_id, model=model,
-                      tokens_in=result.tokens_in, tokens_out=result.tokens_out,
-                      latency_ms=result.latency_ms))  # fmt: skip
+    db.add(
+        UsageEvent(
+            user_id=user_id,
+            kind=kind,
+            provider=provider_id,
+            model=model,
+            tokens_in=result.tokens_in,
+            tokens_out=result.tokens_out,
+            latency_ms=result.latency_ms,
+        )
+    )
     return text, result.served_by or f"{provider_id}/{model}"

@@ -162,12 +162,20 @@ def _pdf(c: DocContent) -> bytes:
             flow.append(Paragraph(escape(s.heading), styles["Heading2"]))
         flow += [Paragraph(escape(p), styles["BodyText"]) for p in s.paragraphs]
         if s.bullets:
-            flow.append(ListFlowable([Paragraph(escape(b), styles["BodyText"]) for b in s.bullets],
-                                     bulletType="bullet"))  # fmt: skip
+            flow.append(
+                ListFlowable(
+                    [Paragraph(escape(b), styles["BodyText"]) for b in s.bullets],
+                    bulletType="bullet",
+                )
+            )
         if s.table and s.table.columns:
             t = RLTable([s.table.columns, *s.table.rows], repeatRows=1)
-            t.setStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)])  # fmt: skip
+            t.setStyle(
+                [
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+                ]
+            )
             flow.append(t)
         flow.append(Spacer(1, 8))
     buf = io.BytesIO()
@@ -222,5 +230,7 @@ def parse_draft(raw: str, fallback_title: str) -> DocContent:
         return DocContent.model_validate(data)
     except (json.JSONDecodeError, ValueError, ValidationError):
         # Model did not return usable JSON: keep its text so nothing is lost.
-        return DocContent(title=fallback_title[:300] or "Draft",
-                          sections=[Section(paragraphs=[raw.strip()[:20000]])])  # fmt: skip
+        return DocContent(
+            title=fallback_title[:300] or "Draft",
+            sections=[Section(paragraphs=[raw.strip()[:20000]])],
+        )

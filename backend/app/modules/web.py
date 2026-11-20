@@ -79,7 +79,7 @@ class TavilySearch:
                 x.get("url", ""),
                 x.get("content", "")[:500],
                 x.get("published_date"),
-            )  # fmt: skip
+            )
             for x in r.get("results", [])
             if x.get("url")
         ]
@@ -112,7 +112,7 @@ class ExaSearch:
                 x.get("url", ""),
                 (x.get("text") or "")[:500],
                 x.get("publishedDate"),
-            )  # fmt: skip
+            )
             for x in r.get("results", [])
             if x.get("url")
         ]
@@ -176,8 +176,9 @@ def check_url(url: str) -> str:
 def fetch_text(url: str) -> tuple[str, str]:
     """Fetch a public page and return (final_url, plain text). Redirect targets are re-checked."""
     current = check_url(url)
-    with httpx.Client(timeout=15, follow_redirects=False,
-                      headers={"User-Agent": "AURA-Research/0.1"}) as client:  # fmt: skip
+    with httpx.Client(
+        timeout=15, follow_redirects=False, headers={"User-Agent": "AURA-Research/0.1"}
+    ) as client:
         for _ in range(MAX_REDIRECTS + 1):
             with client.stream("GET", current) as r:
                 if r.is_redirect and "location" in r.headers:

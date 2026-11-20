@@ -45,10 +45,20 @@ def draft(body: DraftIn, user: VerifiedUser, db: DbSession) -> svc.DocContent:
     model_info(provider, body.model)
     lang = language.resolve(body.prompt, user.language_override, None).reply_instruction()
     result = StreamResult()
-    msgs = [ChatMessage("system", svc.DRAFT_PROMPT.replace("{language}", lang)),
-            ChatMessage("user", body.prompt)]  # fmt: skip
+    msgs = [
+        ChatMessage("system", svc.DRAFT_PROMPT.replace("{language}", lang)),
+        ChatMessage("user", body.prompt),
+    ]
     raw = "".join(provider.stream(body.model, msgs, result))
-    db.add(UsageEvent(user_id=user.id, kind="document", provider=body.provider, model=body.model,
-                      tokens_in=result.tokens_in, tokens_out=result.tokens_out,
-                      latency_ms=result.latency_ms))  # fmt: skip
+    db.add(
+        UsageEvent(
+            user_id=user.id,
+            kind="document",
+            provider=body.provider,
+            model=body.model,
+            tokens_in=result.tokens_in,
+            tokens_out=result.tokens_out,
+            latency_ms=result.latency_ms,
+        )
+    )
     return svc.parse_draft(raw, body.prompt.splitlines()[0])

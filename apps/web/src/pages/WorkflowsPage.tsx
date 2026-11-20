@@ -65,6 +65,40 @@ function Editor({ initial, onSaved }: { initial?: Workflow; onSaved: () => void 
   )
 }
 
+interface Schedule { id: string; interval_minutes: number; input: string; enabled: boolean; next_run_at: string; last_error: string | null }
+
+function Schedules({ wf }: { wf: Workflow }) {
+  const qc = useQueryClient()
+  const key = ['wf-sched', wf.id]
+  const list = useQuery({ queryKey: key, queryFn: () => api<Schedule[]>(`/workflows/${wf.id}/schedules`) })
+  const [hours, setHours] = useState(24)
+  const [input, setInput] = useState('')
+  const done = () => void qc.invalidateQueries({ queryKey: key })
+  const add = useMutation({ mutationFn: () => api(`/workflows/${wf.id}/schedules`, { json: { interval_minutes: hours * 60, input } }), onSuccess: done })
+  const toggle = useMutation({ mutationFn: (s: Schedule) => api(`/workflows/schedules/${s.id}`, { method: 'PATCH', json: { approve: !s.enabled } }), onSuccess: done })
+  const del = useMutation({ mutationFn: (id: string) => api(`/workflows/schedules/${id}`, { method: 'DELETE' }), onSuccess: done })
+  return (
+    <Card className="space-y-3">
+      <h2 className="font-medium">Automation schedule</h2>
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        Every <Input type="number" min={1} max={720} className="h-9 w-20" value={hours} onChange={(e) => setHours(Math.max(1, Number(e.target.value)))} aria-label="Interval in hours" /> hours with input
+        <Input className="h-9 flex-1" value={input} maxLength={8000} onChange={(e) => setInput(e.target.value)} aria-label="Scheduled input" />
+        <Button size="sm" onClick={() => add.mutate()} disabled={add.isPending}>Add schedule</Button>
+      </div>
+      {add.error ? <Alert tone="error">{add.error instanceof ApiError ? add.error.message : 'Failed.'}</Alert> : null}
+      {list.data?.map((s) => (
+        <div key={s.id} className="flex items-center gap-2 text-xs">
+          <Badge>{s.enabled ? 'On' : 'Paused'}</Badge> every {s.interval_minutes / 60} h · next {new Date(s.next_run_at).toLocaleString()}
+          {s.last_error ? <span className="text-danger">last: {s.last_error}</span> : null}
+          <Button size="sm" variant="ghost" className="ml-auto" onClick={() => toggle.mutate(s)}>{s.enabled ? 'Pause' : 'Resume'}</Button>
+          <Button size="icon" variant="ghost" aria-label="Delete schedule" onClick={() => del.mutate(s.id)}><Trash2 className="h-4 w-4" /></Button>
+        </div>
+      ))}
+      <p className="text-xs text-muted">Minimum interval is 1 hour to protect the shared free model allowance. Scheduled runs pause at approval steps.</p>
+    </Card>
+  )
+}
+
 function Runs({ wf }: { wf: Workflow }) {
   const qc = useQueryClient()
   const [input, setInput] = useState('')
@@ -121,7 +155,7 @@ export function WorkflowsPage() {
         </Card>
         <div className="space-y-4">
           {selected === 'new' ? <Editor onSaved={() => { refresh(); setSelected(null) }} /> : null}
-          {wf ? <><Editor key={`${wf.id}-${wf.version}`} initial={wf} onSaved={refresh} /><Runs wf={wf} /></> : null}
+          {wf ? <><Editor key={`${wf.id}-${wf.version}`} initial={wf} onSaved={refresh} /><Runs wf={wf} /><Schedules wf={wf} /></> : null}
           {!selected ? <EmptyState title="Select or create a workflow" /> : null}
         </div>
       </div>
