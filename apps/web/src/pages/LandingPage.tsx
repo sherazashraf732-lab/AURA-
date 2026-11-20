@@ -45,6 +45,7 @@ export function LandingPage() {
           <Button asChild size="lg"><Link to={me ? '/app' : '/signup'}>{me ? 'Open workspace' : 'Get started free'}</Link></Button>
         </motion.div>
         <p className="mt-3 text-xs text-muted">Public beta. Free usage limits apply; no payment details are ever requested.</p>
+        <p className="mt-2 text-xs"><Link className="text-muted hover:underline" to="/privacy">Privacy</Link> · <Link className="text-muted hover:underline" to="/terms">Terms</Link></p>
       </section>
       <section className="mx-auto grid max-w-6xl gap-4 px-4 pb-20 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((f, i) => (

@@ -6,7 +6,10 @@ from tests.conftest import Api, last_link, make_user
 
 
 def test_signup_verify_login_logout_flow(api: Api, db: Session) -> None:
-    r = api.post("/auth/signup", {"email": "A@Example.com", "password": "correct-horse-1"})
+    r = api.post(
+        "/auth/signup",
+        {"email": "A@Example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     assert r.status_code == 202
     assert api.get("/auth/me").json() is None
 
@@ -30,7 +33,10 @@ def test_signup_verify_login_logout_flow(api: Api, db: Session) -> None:
 
 
 def test_token_reuse_and_bad_token_rejected(api: Api, db: Session) -> None:
-    api.post("/auth/signup", {"email": "b@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "b@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     token = last_link(db, "b@example.com")
     assert api.post("/auth/verify-email", {"token": token}).status_code == 200
     assert (
@@ -40,7 +46,10 @@ def test_token_reuse_and_bad_token_rejected(api: Api, db: Session) -> None:
 
 
 def test_login_errors_are_generic(api: Api) -> None:
-    api.post("/auth/signup", {"email": "c@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "c@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     wrong_pw = api.post("/auth/login", {"email": "c@example.com", "password": "nope-nope-nope"})
     no_user = api.post("/auth/login", {"email": "ghost@example.com", "password": "nope-nope-nope"})
     assert wrong_pw.status_code == no_user.status_code == 401
@@ -48,15 +57,23 @@ def test_login_errors_are_generic(api: Api) -> None:
 
 
 def test_duplicate_signup_does_not_reveal_account(api: Api, db: Session) -> None:
-    first = api.post("/auth/signup", {"email": "d@example.com", "password": "correct-horse-1"})
-    second = api.post("/auth/signup", {"email": "d@example.com", "password": "another-pass-22"})
+    first = api.post(
+        "/auth/signup",
+        {"email": "d@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
+    second = api.post(
+        "/auth/signup",
+        {"email": "d@example.com", "password": "another-pass-22", "accept_terms": True},
+    )
     assert first.status_code == second.status_code == 202
     assert first.json() == second.json()
     assert len(db.scalars(select(User).where(User.email == "d@example.com")).all()) == 1
 
 
 def test_weak_password_rejected(api: Api) -> None:
-    r = api.post("/auth/signup", {"email": "e@example.com", "password": "short"})
+    r = api.post(
+        "/auth/signup", {"email": "e@example.com", "password": "short", "accept_terms": True}
+    )
     assert r.status_code == 422 and r.json()["error"]["code"] == "weak_password"
 
 
@@ -108,7 +125,10 @@ def test_password_reset_revokes_sessions_and_is_single_use(db: Session) -> None:
 
 def test_reset_request_for_unknown_email_looks_identical(api: Api) -> None:
     a = api.post("/auth/request-password-reset", {"email": "nobody@example.com"})
-    api.post("/auth/signup", {"email": "h@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "h@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     b = api.post("/auth/request-password-reset", {"email": "h@example.com"})
     assert a.status_code == b.status_code == 202 and a.json() == b.json()
 
@@ -132,7 +152,10 @@ def test_session_token_stored_hashed(db: Session) -> None:
 
 
 def test_bootstrap_admin_only_after_verification(api: Api, db: Session) -> None:
-    api.post("/auth/signup", {"email": "admin@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "admin@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     api.post("/auth/login", {"email": "admin@example.com", "password": "correct-horse-1"})
     assert api.get("/auth/me").json()["role"] == "user"
     api.post("/auth/verify-email", {"token": last_link(db, "admin@example.com")})

@@ -19,7 +19,7 @@ PAGES = ["/app", "/app/chat", "/app/projects", "/app/memory", "/app/knowledge", 
          "/app/fact-check", "/app/agents", "/app/documents", "/app/data", "/app/coding",
          "/app/workflows", "/app/usage", "/app/security", "/app/arena", "/app/evaluation",
          "/app/integrations", "/app/graph", "/app/ocr", "/app/vision", "/app/audio",
-         "/app/settings", "/app/modules"]  # fmt: skip
+         "/app/settings", "/app/modules", "/privacy", "/terms"]  # fmt: skip
 
 
 def main() -> int:
@@ -38,6 +38,7 @@ def main() -> int:
         page.goto(f"{BASE}/signup")
         page.get_by_label("Email").fill(email)
         page.get_by_label("Password").fill(password)
+        page.get_by_role("checkbox").check()
         page.get_by_role("button", name="Create account").click()
         page.get_by_text("Check your inbox").wait_for()
 

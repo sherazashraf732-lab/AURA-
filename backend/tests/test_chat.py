@@ -44,7 +44,10 @@ def test_chat_round_trip_and_language(db: Session) -> None:
 
 
 def test_unverified_user_cannot_chat(api: Api, db: Session) -> None:
-    api.post("/auth/signup", {"email": "nv@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "nv@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     api.post("/auth/login", {"email": "nv@example.com", "password": "correct-horse-1"})
     r = api.post("/conversations", {"provider": "mock", "model": "aura-mock-1"})
     assert r.status_code == 403 and r.json()["error"]["code"] == "email_unverified"

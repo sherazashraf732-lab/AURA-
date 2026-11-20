@@ -34,6 +34,9 @@ const GraphPage = lazy(() => Tools().then((m) => ({ default: m.GraphPage })))
 const OcrPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="ocr" /> })))
 const VisionPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="vision" /> })))
 const AudioPage = lazy(() => Tools().then((m) => ({ default: () => <m.MediaPage kind="audio" /> })))
+const AdminPage = lazy(() => import('@/pages/AdminPage').then((m) => ({ default: m.AdminPage })))
+const PrivacyPage = lazy(() => import('@/pages/LegalPages').then((m) => ({ default: m.PrivacyPage })))
+const TermsPage = lazy(() => import('@/pages/LegalPages').then((m) => ({ default: m.TermsPage })))
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectDetailPage })))
 
 const queryClient = new QueryClient({
@@ -55,6 +58,8 @@ export function AppRoutes() {
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
       <Route path="/app" element={<AppShell />}>
         <Route index element={<DashboardPage />} />
         <Route path="settings" element={<SettingsPage />} />
@@ -70,6 +75,7 @@ export function AppRoutes() {
         <Route path="coding" element={<CodingPage />} />
         <Route path="workflows" element={<WorkflowsPage />} />
         <Route path="usage" element={<UsagePage />} />
+        <Route path="admin" element={<AdminPage />} />
         <Route path="security" element={<SecurityPage />} />
         <Route path="arena" element={<ArenaPage />} />
         <Route path="evaluation" element={<EvaluationPage />} />

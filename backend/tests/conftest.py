@@ -97,7 +97,12 @@ def make_user(
     db: Session, email: str = "user@example.com", password: str = "correct-horse-1"
 ) -> Api:
     api = Api()
-    assert api.post("/auth/signup", {"email": email, "password": password}).status_code == 202
+    assert (
+        api.post(
+            "/auth/signup", {"email": email, "password": password, "accept_terms": True}
+        ).status_code
+        == 202
+    )
     assert api.post("/auth/verify-email", {"token": last_link(db, email)}).status_code == 200
     assert api.post("/auth/login", {"email": email, "password": password}).status_code == 200
     return api

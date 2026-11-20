@@ -29,10 +29,18 @@ class Settings(BaseSettings):
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
     openrouter_api_key: SecretStr | None = None
+    mistral_api_key: SecretStr | None = None
+    cloudflare_api_token: SecretStr | None = None
+    cloudflare_account_id: str | None = None
+    cerebras_api_key: SecretStr | None = None
+    huggingface_api_key: SecretStr | None = None
+    nvidia_api_key: SecretStr | None = None
     tavily_api_key: SecretStr | None = None
     exa_api_key: SecretStr | None = None
     # Shared free-tier protection: total AURA requests per provider per UTC day.
     provider_daily_request_cap: int = 500
+
+    sentry_dsn: SecretStr | None = None  # optional error monitoring (Sentry free plan)
 
     resend_api_key: SecretStr | None = None
     mail_from: str | None = None

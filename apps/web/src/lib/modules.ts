@@ -68,6 +68,6 @@ export const MODULES: ModuleInfo[] = [
   { id: 'usage', name: 'Usage', path: '/app/usage', icon: Gauge, status: 'live', phase: 6, summary: 'Your quotas and provider usage (M18).' },
   { id: 'security', name: 'Security Center', path: '/app/security', icon: Shield, status: 'live', phase: 13, summary: 'Sessions, data export and deletion (M19).' },
   { id: 'settings', name: 'Settings', path: '/app/settings', icon: Settings, status: 'live', phase: 3, summary: 'Appearance, language and memory preferences.' },
-  { id: 'admin', name: 'Admin', path: '/app/admin', icon: Users, status: 'planned', phase: 14, adminOnly: true, summary: 'Users, moderation, quotas and service health (M17).' },
+  { id: 'admin', name: 'Admin', path: '/app/admin', icon: Users, status: 'live', phase: 14, adminOnly: true, summary: 'Users, moderation, quotas and service health (M17).' },
   { id: 'modules', name: 'All modules', path: '/app/modules', icon: Activity, status: 'live', phase: 3, summary: 'Status of every AURA module.' },
 ]

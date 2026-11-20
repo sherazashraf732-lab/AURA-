@@ -66,6 +66,8 @@ export function SignupPage() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [terms, setTerms] = useState(false)
+  const [website, setWebsite] = useState('') // honeypot, invisible to people
   const [done, setDone] = useState<string | null>(null)
   const { busy, error, run } = useSubmit()
   const tooShort = password.length > 0 && password.length < 10
@@ -73,7 +75,7 @@ export function SignupPage() {
   const submit = (e: FormEvent) => {
     e.preventDefault()
     void run(async () => {
-      const r = await api<{ message: string }>('/auth/signup', { json: { email, password, display_name: name } })
+      const r = await api<{ message: string }>('/auth/signup', { json: { email, password, display_name: name, accept_terms: terms, website } })
       setDone(r.message)
     })
   }
@@ -99,7 +101,12 @@ export function SignupPage() {
         <Field label="Password" htmlFor="password" error={tooShort ? 'Use at least 10 characters.' : undefined} hint="At least 10 characters.">
           <Input id="password" type="password" autoComplete="new-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
-        <Button type="submit" className="w-full" disabled={busy || !email || password.length < 10}>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" value={website} onChange={(e) => setWebsite(e.target.value)} />
+        <label className="flex items-start gap-2 text-sm">
+          <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} className="mt-1" />
+          <span>I agree to the <Link className="text-primary-strong hover:underline" to="/terms" target="_blank">Terms</Link> and <Link className="text-primary-strong hover:underline" to="/privacy" target="_blank">Privacy Policy</Link>.</span>
+        </label>
+        <Button type="submit" className="w-full" disabled={busy || !email || password.length < 10 || !terms}>
           {busy ? <Spinner label="Creating account" /> : 'Create account'}
         </Button>
         <p className="text-center text-sm text-muted">

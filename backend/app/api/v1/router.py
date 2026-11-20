@@ -3,6 +3,7 @@ from sqlalchemy import text
 
 from app.api.deps import DbSession, check_csrf
 from app.api.v1 import (
+    admin,
     agents,
     auth,
     chat,
@@ -41,5 +42,5 @@ api_router.include_router(documents.router)
 api_router.include_router(data.router)
 api_router.include_router(coding.router)
 api_router.include_router(workflows.router)
-for _r in (security, evaluation, media, integrations):
+for _r in (security, evaluation, media, integrations, admin):
     api_router.include_router(_r.router)

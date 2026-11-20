@@ -119,13 +119,20 @@ class OpenAICompatibleProvider:
     base_url: str
     api_key_setting: str
     extra_headers: dict[str, str] = field(default_factory=dict)
+    account_setting: str | None = None  # e.g. Cloudflare account id, filled into "{account}"
+    in_auto: bool = True  # False for non-production free tiers (kept out of Auto failover)
 
     def _key(self) -> str | None:
         v = getattr(get_settings(), self.api_key_setting, None)
         return v.get_secret_value() if v else None
 
+    def _url(self) -> str:
+        acct = getattr(get_settings(), self.account_setting, None) if self.account_setting else ""
+        return self.base_url.replace("{account}", acct or "")
+
     def configured(self) -> bool:
-        return bool(self._key())
+        acct_ok = not self.account_setting or bool(getattr(get_settings(), self.account_setting))
+        return bool(self._key()) and acct_ok
 
     def stream(
         self, model: str, messages: list[ChatMessage], result: StreamResult
@@ -145,7 +152,7 @@ class OpenAICompatibleProvider:
         try:
             with httpx.stream(
                 "POST",
-                f"{self.base_url}/chat/completions",
+                f"{self._url()}/chat/completions",
                 json=payload,
                 headers=headers,
                 timeout=httpx.Timeout(60, connect=10),
@@ -238,6 +245,86 @@ PROVIDERS: dict[str, Provider] = {
 }
 
 
+def _compat(
+    pid: str,
+    name: str,
+    url: str,
+    key: str,
+    model: str,
+    label: str,
+    ctx: int,
+    note: str,
+    policy: str,
+    **kw: object,
+) -> OpenAICompatibleProvider:
+    info = ProviderInfo(pid, name, False, note, policy, (ModelInfo(model, label, ctx),))
+    return OpenAICompatibleProvider(info, url, key, **kw)  # type: ignore[arg-type]
+
+
+# Additional free tiers (2026-11-20). Confirm model ids in each console when adding keys.
+PROVIDERS.update(
+    {
+        "mistral": _compat(
+            "mistral",
+            "Mistral (free Experiment plan)",
+            "https://api.mistral.ai/v1",
+            "mistral_api_key",
+            "mistral-small-latest",
+            "Mistral Small",
+            128_000,
+            "Free plan with per-model monthly limits; phone verification at sign-up.",
+            "Free-plan API data may be used for training unless you opt out in the admin console.",
+        ),
+        "cloudflare": _compat(
+            "cloudflare",
+            "Cloudflare Workers AI",
+            "https://api.cloudflare.com/client/v4/accounts/{account}/ai/v1",
+            "cloudflare_api_token",
+            "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+            "Llama 3.3 70B",
+            24_000,
+            "10,000 Neurons per day free; requests fail after that until 00:00 UTC.",
+            "Cloudflare states it does not train on customer content.",
+            account_setting="cloudflare_account_id",
+        ),
+        "cerebras": _compat(
+            "cerebras",
+            "Cerebras (free trial)",
+            "https://api.cerebras.ai/v1",
+            "cerebras_api_key",
+            "gpt-oss-120b",
+            "GPT-OSS 120B",
+            131_072,
+            "Trial only: $5 of credit that expires after 30 days.",
+            "See Cerebras terms (not yet verified by AURA).",
+        ),
+        "huggingface": _compat(
+            "huggingface",
+            "Hugging Face Inference",
+            "https://router.huggingface.co/v1",
+            "huggingface_api_key",
+            "openai/gpt-oss-20b",
+            "GPT-OSS 20B",
+            131_072,
+            "Very small free monthly credit (about $0.10).",
+            "Routed to third-party inference providers; policies vary.",
+        ),
+        "nvidia": _compat(
+            "nvidia",
+            "NVIDIA NIM (development only)",
+            "https://integrate.api.nvidia.com/v1",
+            "nvidia_api_key",
+            "openai/gpt-oss-120b",
+            "GPT-OSS 120B",
+            131_072,
+            "Free for prototyping and testing only; not allowed for production use.",
+            "Developer Program terms: non-production use only.",
+            in_auto=False,
+        ),
+    }
+)
+AUTO_ORDER = ["groq", "gemini", "cerebras", "mistral", "cloudflare", "openrouter", "huggingface"]
+
 FAILOVER_CODES = {
     "provider_quota",
     "provider_error",
@@ -266,10 +353,16 @@ class AutoProvider:
     )
 
     def candidates(self, input_tokens: int) -> list[str]:
-        order = ["groq", "gemini", "openrouter"]
+        order = list(AUTO_ORDER)
         if input_tokens > LONG_CONTEXT_TOKENS:
-            order = ["gemini", "groq", "openrouter"]
-        return [p for p in order if PROVIDERS[p].configured() and not PROVIDERS[p].info.paid]
+            order = ["gemini", *[p for p in order if p != "gemini"]]
+        return [
+            p
+            for p in order
+            if PROVIDERS[p].configured()
+            and not PROVIDERS[p].info.paid
+            and getattr(PROVIDERS[p], "in_auto", True)
+        ]
 
     def configured(self) -> bool:
         return bool(self.candidates(0))

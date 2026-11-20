@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 from app.api.deps import CSRF_COOKIE, SESSION_COOKIE, CurrentUser, DbSession, OptionalUser
 from app.core.config import get_settings
+from app.core.errors import AppError
 from app.core.ratelimit import enforce
 from app.core.security import new_token
 from app.database.session import utcnow
@@ -19,6 +20,8 @@ class SignupIn(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=256)
     display_name: str = Field(default="", max_length=80)
+    accept_terms: bool = False
+    website: str = Field(default="", max_length=200)  # honeypot: hidden in the UI, bots fill it
 
 
 class LoginIn(BaseModel):
@@ -89,6 +92,10 @@ def csrf(response: Response) -> dict[str, str]:
 @router.post("/signup", status_code=202)
 def signup(body: SignupIn, request: Request, db: DbSession) -> Message:
     enforce(request, "signup", limit=5, window_s=3600)
+    if not body.accept_terms:
+        raise AppError("terms_required", "Please accept the Terms and Privacy Policy.", 422)
+    if body.website:  # bot: answer exactly like a real signup but create nothing
+        return Message(message="Check your email to verify your account.")
     svc.signup(db, body.email, body.password, body.display_name)
     return Message(message="Check your email to verify your account.")
 

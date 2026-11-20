@@ -83,7 +83,10 @@ def test_file_validation(db: Session) -> None:
 
 
 def test_unverified_cannot_upload(api: Api) -> None:
-    api.post("/auth/signup", {"email": "kv@example.com", "password": "correct-horse-1"})
+    api.post(
+        "/auth/signup",
+        {"email": "kv@example.com", "password": "correct-horse-1", "accept_terms": True},
+    )
     api.post("/auth/login", {"email": "kv@example.com", "password": "correct-horse-1"})
     assert upload(api, "a.txt", b"hello world").status_code == 403
 

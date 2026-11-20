@@ -16,6 +16,7 @@ Nothing is deployed or pushed. Local Git only.
 | Phase 11 data studio | PASS (backend tests) | CSV/XLSX import (50k rows), cleaning, column statistics, grouped chart data, CSV/XLSX export with formula-injection guard, Recharts UI loaded only on that page; 4 tests |
 | Phase 12 auto routing, coding lab, workflows | PASS (backend tests, mock + simulated failover) | Auto mode picks a free provider per request and fails over on limits/errors, never to paid or demo; Coding Lab (no execution); workflows with versions, approval steps and run log; 8 new tests. Automation schedules (M13) come in Phase 13 |
 | Phase 13 remaining modules | PASS (backend tests + browser smoke) | Security Center, Model Arena, Evaluation Center, automation schedules, OCR/Vision/Audio (Tesseract/Gemini/Groq Whisper/demo, EXIF stripped), allowlisted Integrations with audit, Knowledge Graph with provenance; 12 tests. Browser smoke test (scripts/smoke_e2e.py, Edge): 23/23 pages load with no console errors, chat round trip works. External MCP servers intentionally not offered in beta |
-| Phases 14–17 | NOT STARTED | — |
+| Phase 14 beta hardening | PASS (local) | 8 free providers in Auto chain; admin dashboard (stats, users, suspend, audit); terms consent + signup honeypot; optional Sentry (no PII) + access logs; backup/restore verified (row counts + migration matched); PRIVACY/TERMS pages, SECURITY.md, DEPLOYMENT.md; browser smoke 25/25 pages. Not done: load test, independent security review, legal review of policy texts |
+| Phases 15–17 | NOT STARTED | Phase 15 public deploy needs owner approval |
 
-Backend: 102 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
+Backend: 105 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
