@@ -132,7 +132,10 @@ function ChatView({ conversationId }: { conversationId?: string }) {
   })
 
   const selected = picked ?? (conv.data ? { provider: conv.data.provider, model: conv.data.model } : { provider: 'mock', model: 'aura-mock-1' })
-  useEffect(() => bottom.current?.scrollIntoView({ block: 'end' }), [live, history.data])
+  useEffect(() => {
+    // Newer browsers return a Promise from scrollIntoView; an effect must return nothing.
+    bottom.current?.scrollIntoView({ block: 'end' })
+  }, [live, history.data])
 
   const streaming = live.some((m) => m.streaming)
   const providerId = selected.provider
