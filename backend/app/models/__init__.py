@@ -11,6 +11,7 @@ from app.models.identity import (
     Workspace,
 )
 from app.models.knowledge import DocumentChunk, KnowledgeSource
+from app.models.workflows import Workflow, WorkflowRun
 
 __all__ = [
     "AgentRun",
@@ -29,5 +30,7 @@ __all__ = [
     "UsageEvent",
     "User",
     "UserMemory",
+    "Workflow",
+    "WorkflowRun",
     "Workspace",
 ]

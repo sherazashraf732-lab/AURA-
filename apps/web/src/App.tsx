@@ -22,6 +22,8 @@ const RunDetailPage = lazy(() => Agents().then((m) => ({ default: m.RunDetailPag
 const KnowledgePage = lazy(() => import('@/pages/KnowledgePage').then((m) => ({ default: m.KnowledgePage })))
 const DocumentsPage = lazy(() => import('@/pages/DocumentsPage').then((m) => ({ default: m.DocumentsPage })))
 const DataPage = lazy(() => import('@/pages/DataPage').then((m) => ({ default: m.DataPage })))
+const CodingPage = lazy(() => import('@/pages/CodingPage').then((m) => ({ default: m.CodingPage })))
+const WorkflowsPage = lazy(() => import('@/pages/WorkflowsPage').then((m) => ({ default: m.WorkflowsPage })))
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectDetailPage })))
 
 const queryClient = new QueryClient({
@@ -55,6 +57,8 @@ export function AppRoutes() {
         <Route path="knowledge" element={<KnowledgePage />} />
         <Route path="documents" element={<DocumentsPage />} />
         <Route path="data" element={<DataPage />} />
+        <Route path="coding" element={<CodingPage />} />
+        <Route path="workflows" element={<WorkflowsPage />} />
         <Route path="research" element={<ResearchPage />} />
         <Route path="fact-check" element={<FactCheckPage />} />
         <Route path="agents" element={<ControlRoomPage />} />

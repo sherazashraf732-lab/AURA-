@@ -212,3 +212,45 @@ def test_search_and_archive(db: Session) -> None:
     assert [c["id"] for c in api.get("/conversations?archived=true").json()] == [a]
     r = api.post(f"/conversations/{a}/messages", {"content": "hi"})
     assert r.status_code == 409
+
+
+def test_auto_provider_fails_over_between_free_providers(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.core.errors import AppError
+    from app.modules import providers as pv
+
+    calls: list[str] = []
+
+    def fake(pid: str, fail: bool):  # type: ignore[no-untyped-def]
+        def stream(model, messages, result):  # type: ignore[no-untyped-def]
+            calls.append(pid)
+            if fail:
+                raise AppError("provider_quota", "limit", 429)
+            yield f"hi from {pid}"
+
+        return stream
+
+    for pid, fail in (("groq", True), ("gemini", False), ("openrouter", False)):
+        monkeypatch.setattr(pv.PROVIDERS[pid], "configured", lambda: True)
+        monkeypatch.setattr(pv.PROVIDERS[pid], "stream", fake(pid, fail))
+    res = pv.StreamResult()
+    out = "".join(pv.PROVIDERS["auto"].stream("auto", [pv.ChatMessage("user", "x")], res))
+    assert out == "hi from gemini" and calls == ["groq", "gemini"]
+    assert res.served_by.startswith("gemini/")
+
+    # Long inputs try the largest-context provider first.
+    assert pv.PROVIDERS["auto"].candidates(200_000)[0] == "gemini"  # type: ignore[attr-defined]
+
+    # Everything exhausted -> clear error, never a paid provider or the demo model.
+    monkeypatch.setattr(pv.PROVIDERS["gemini"], "stream", fake("gemini", True))
+    monkeypatch.setattr(pv.PROVIDERS["openrouter"], "stream", fake("openrouter", True))
+    with pytest.raises(AppError) as e:
+        "".join(
+            pv.PROVIDERS["auto"].stream("auto", [pv.ChatMessage("user", "x")], pv.StreamResult())
+        )
+    assert e.value.code == "no_free_provider"
+
+
+def test_auto_unavailable_without_keys(db: Session) -> None:
+    api = make_user(db)
+    auto = next(p for p in api.get("/models").json() if p["id"] == "auto")
+    assert auto["available"] is False

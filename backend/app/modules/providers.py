@@ -28,6 +28,7 @@ class StreamResult:
     tokens_in: int = 0
     tokens_out: int = 0
     latency_ms: int = 0
+    served_by: str = ""  # "provider/model" that actually answered (set by AutoProvider)
 
 
 @dataclass(frozen=True)
@@ -235,6 +236,66 @@ PROVIDERS: dict[str, Provider] = {
         {"X-Title": "AURA"},
     ),
 }
+
+
+FAILOVER_CODES = {"provider_quota", "provider_error", "provider_timeout", "provider_unreachable",
+                  "provider_unconfigured"}  # fmt: skip
+LONG_CONTEXT_TOKENS = 100_000
+
+
+class AutoProvider:
+    """Picks a free provider per request and fails over to the next one on limits or errors.
+
+    Order: Groq (fast) -> Gemini (largest context) -> OpenRouter free; very long inputs try Gemini
+    first. Only free, configured providers are candidates: it never falls back to a paid provider,
+    and it never silently falls back to the offline demo model.
+    """
+
+    info = ProviderInfo(
+        id="auto",
+        name="Auto (best free model)",
+        paid=False,
+        free_tier_note="Chooses a free provider per request and switches if one hits its limit.",
+        data_policy="Messages go to whichever free provider answers; see each provider's policy.",
+        models=(ModelInfo("auto", "Auto", 1_000_000),),
+    )
+
+    def candidates(self, input_tokens: int) -> list[str]:
+        order = ["groq", "gemini", "openrouter"]
+        if input_tokens > LONG_CONTEXT_TOKENS:
+            order = ["gemini", "groq", "openrouter"]
+        return [p for p in order if PROVIDERS[p].configured() and not PROVIDERS[p].info.paid]
+
+    def configured(self) -> bool:
+        return bool(self.candidates(0))
+
+    def stream(
+        self, model: str, messages: list[ChatMessage], result: StreamResult
+    ) -> Iterator[str]:
+        tokens = sum(estimate_tokens(m.content) for m in messages)
+        last: AppError | None = None
+        for pid in self.candidates(tokens):
+            p = PROVIDERS[pid]
+            m = max(p.info.models, key=lambda x: x.context_window)
+            if m.context_window < tokens:
+                continue
+            started = False
+            try:
+                for chunk in p.stream(m.id, messages, result):
+                    started = True
+                    yield chunk
+                result.served_by = f"{pid}/{m.id}"
+                return
+            except AppError as e:
+                if started or e.code not in FAILOVER_CODES:
+                    raise  # never splice two providers' answers together
+                last = e
+        raise AppError("no_free_provider",
+                       "No free model is available right now. Please try again later.",
+                       last.status if last else 503)  # fmt: skip
+
+
+PROVIDERS["auto"] = AutoProvider()
 
 
 def get_provider(provider_id: str) -> Provider:

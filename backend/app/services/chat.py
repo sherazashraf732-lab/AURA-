@@ -389,7 +389,7 @@ def stream_reply(user_id: UUID, conversation_id: UUID, text: str) -> Iterator[st
                     content=content,
                     language=detection.language,
                     provider=conv.provider,
-                    model=conv.model,
+                    model=result.served_by or conv.model,
                     tokens_in=result.tokens_in,
                     tokens_out=result.tokens_out,
                     status=status if content else "error",
