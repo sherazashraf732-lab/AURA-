@@ -11,6 +11,12 @@ os.environ.setdefault(
 )
 os.environ["APP_ENV"] = "test"
 os.environ["BOOTSTRAP_ADMIN_EMAIL"] = "admin@example.com"
+# Tests never call real providers, even when backend/.env holds the owner's keys.
+for _k in ("GEMINI", "GROQ", "OPENROUTER", "MISTRAL", "CEREBRAS", "HUGGINGFACE", "NVIDIA",
+           "TAVILY", "EXA", "RESEND"):  # fmt: skip
+    os.environ[f"{_k}_API_KEY"] = ""
+os.environ["CLOUDFLARE_API_TOKEN"] = ""
+os.environ["SENTRY_DSN"] = ""
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import select, text  # noqa: E402
