@@ -26,10 +26,15 @@ from app.models.identity import OutboxEmail  # noqa: E402
 @pytest.fixture(scope="session", autouse=True)
 def _schema() -> Iterator[None]:
     engine = get_engine()
-    Base.metadata.drop_all(engine)
+
+    def reset() -> None:
+        with engine.begin() as conn:
+            conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public"))
+
+    reset()
     Base.metadata.create_all(engine)
     yield
-    Base.metadata.drop_all(engine)
+    reset()
 
 
 @pytest.fixture(autouse=True)

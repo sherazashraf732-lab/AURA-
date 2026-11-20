@@ -1,4 +1,6 @@
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +10,7 @@ from starlette.responses import Response
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.errors import install_error_handlers
+from app.services.research import recover_stuck_runs
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
@@ -19,10 +22,17 @@ SECURITY_HEADERS = {
 }
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    recover_stuck_runs()  # in-process runs cannot survive a restart; mark them failed honestly
+    yield
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title="AURA API",
+        lifespan=lifespan,
         version="0.1.0",
         docs_url=None if settings.is_production else "/api/docs",
         openapi_url=None if settings.is_production else "/api/openapi.json",
