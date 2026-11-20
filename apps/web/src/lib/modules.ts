@@ -54,7 +54,7 @@ export const MODULES: ModuleInfo[] = [
   { id: 'factcheck', name: 'Fact Checker', path: '/app/fact-check', icon: CheckCheck, status: 'live', phase: 9, summary: 'Supporting and contradicting evidence for claims (M02).' },
   { id: 'knowledge', name: 'Knowledge Base', path: '/app/knowledge', icon: BookOpen, status: 'live', phase: 9, summary: 'Upload documents and get cited answers (M05).' },
   { id: 'documents', name: 'Document Studio', path: '/app/documents', icon: FileText, status: 'live', phase: 10, summary: 'Editable DOCX, PPTX, XLSX and PDF output (M06).' },
-  { id: 'data', name: 'Data Studio', path: '/app/data', icon: BarChart3, status: 'planned', phase: 11, summary: 'CSV/XLSX analysis and charts (M07).' },
+  { id: 'data', name: 'Data Studio', path: '/app/data', icon: BarChart3, status: 'live', phase: 11, summary: 'CSV/XLSX analysis and charts (M07).' },
   { id: 'coding', name: 'Coding Lab', path: '/app/coding', icon: Code2, status: 'planned', phase: 12, summary: 'Code explanation, review and tests; execution disabled in beta (M11).' },
   { id: 'workflows', name: 'Workflows', path: '/app/workflows', icon: GitBranch, status: 'planned', phase: 12, summary: 'Visual workflows with approvals (M12, M13).' },
   { id: 'mcp', name: 'Integrations (MCP)', path: '/app/integrations', icon: Plug, status: 'planned', phase: 13, summary: 'Permissioned tool integrations (M14).' },

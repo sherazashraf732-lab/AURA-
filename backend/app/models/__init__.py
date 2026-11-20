@@ -1,5 +1,6 @@
 from app.models.agents import AgentRun, AgentStep
 from app.models.chat import Conversation, ConversationSummary, Message, UsageEvent, UserMemory
+from app.models.data import Dataset
 from app.models.identity import (
     AuditEvent,
     AuthSession,
@@ -18,6 +19,7 @@ __all__ = [
     "AuthSession",
     "Conversation",
     "ConversationSummary",
+    "Dataset",
     "DocumentChunk",
     "EmailToken",
     "KnowledgeSource",

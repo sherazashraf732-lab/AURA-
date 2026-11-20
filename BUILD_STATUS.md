@@ -13,6 +13,7 @@ Nothing is deployed or pushed. Local Git only.
 | Phase 8 research/agents | PASS (backend tests, demo sources) | 6 run tests + SSRF guard; real search providers untested (no keys) |
 | Phase 9 knowledge base + fact checker | PASS (backend tests) | Upload txt/md/csv/pdf/docx with magic-byte + zip-bomb checks, PostgreSQL full-text search, cited answers, isolation; 6 tests. Only extracted text is stored (no original files yet) |
 | Phase 10 document studio | PASS (backend tests) | DOCX/PPTX/XLSX/PDF from one content model, each re-opened to validate; spreadsheet formula-injection guard; AI draft; 8 tests. Known limit: PDF does not render Urdu script; files are not stored |
-| Phases 11–17 | NOT STARTED | — |
+| Phase 11 data studio | PASS (backend tests) | CSV/XLSX import (50k rows), cleaning, column statistics, grouped chart data, CSV/XLSX export with formula-injection guard, Recharts UI loaded only on that page; 4 tests |
+| Phases 12–17 | NOT STARTED | — |
 
-Backend: 78 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
+Backend: 82 tests pass. Web: 7 tests pass. Not yet done: browser end-to-end test of the UI, Phases 9-17.
